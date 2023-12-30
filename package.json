@@ -1,0 +1,19 @@
+{
+  "name": "csc7084webapp",
+  "version": "1.0.0",
+  "description": "Online repo for CSC7084 - Web Development module assignment of developing an emotion tracker web app",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.0.2"
+  }
+}

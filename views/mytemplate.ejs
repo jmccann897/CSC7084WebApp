@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClassList</title>
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
+</head>
+<body>
+    <div>
+        <h2><%= title %></h2>
+        <table class="u-full-width">
+            <thead>
+                <tr>
+                    <th>Name of User</th>
+                    <th>Date user joined</th>
+                    <th>Last date online</th>
+                    <th>Length of time on app</th>
+                    <th>Yrs since grad</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% const currentyear = new Date().getFullYear(); %>
+                <% for (let student of data) {%>
+                <%  let numyear = student.end - student.start; %>
+                <%  let numyearsince = currentyear - student.end; %>
+                <tr>
+                    <td><%= student.name %></td>
+                    <td><%= student.start %></td>
+                    <td><%= student.end %></td>
+                    <td><%= numyear %></td>
+                    <td><%= numyearsince %></td>
+
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+    
+</body>
+</html>

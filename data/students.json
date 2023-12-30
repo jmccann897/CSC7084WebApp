@@ -1,0 +1,23 @@
+
+[
+    {
+    "name": "John",
+    "start": 2017,
+    "end": 2020
+    },
+    {
+    "name": "Ringo",
+    "start": 2018,
+    "end": 2021
+    },
+    {
+    "name": "Paul",
+    "start": 2016,
+    "end": 2019
+    },
+    {
+    "name": "George",
+    "start": 2017,
+    "end": 2021
+    }
+]
