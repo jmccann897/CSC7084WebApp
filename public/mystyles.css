@@ -104,3 +104,31 @@ input[type=submit]{
     text-decoration: none;
     font-size: large;
 }
+
+/*Media rules for adjusting div items 
+through .flex-item class to improve display */
+@media only screen and (max-width: 1458px){
+    .flex-item{
+        padding: 20px 60px;
+    }
+}
+@media only screen and (max-width: 1252px){
+    .flex-item{
+        padding: 20px 50px;
+    }
+}
+@media only screen and (max-width: 1076px){
+    .flex-item{
+        padding: 20px 40px;
+    }
+}
+@media only screen and (max-width: 899px){
+    .flex-item{
+        flex-basis: 30%;
+    }
+}
+@media only screen and (max-width: 635px){
+    .flex-item{
+        flex-basis: 100%;
+    }
+}

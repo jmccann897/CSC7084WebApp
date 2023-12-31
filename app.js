@@ -2,11 +2,20 @@ const express = require("express");
 const morgan = require("morgan");
 const PORT = 3000;
 
-const app = express(); //creating express object rep our app
+
+/*Array of JSON objects*/
+const wishlist = [
+  {"item": "Playstation 5"},
+  {"item": "Sci fi novels"},
+  {"item": "Selection box"},
+  {"item": "Guitar"}
+];
+
+//creating express object rep our app
+const app = express(); 
 
 /*To dynamically render html, need to use engine
-To use engine, it needs set on app object
-*/
+To use engine, it needs set on app object*/
 app.set('view engine', 'ejs');
 
 /*setting the directory for static files in public folder 
@@ -21,7 +30,11 @@ const data = JSON.parse(
     fs.readFileSync(__dirname + '/data/students.json')
 );
 
-app.use(morgan("tiny")); //provides minimal http req info logging
+//provides minimal http req info logging
+app.use(morgan("tiny")); 
+/*parser for incoming requests with URL encoding
+extended allows for arrays eg JSON arrays*/
+app.use(express.urlencoded({extended: true}));
 
 //Routing - should be in own file structure
 //route handler for http GET requests for default / paths
@@ -35,13 +48,23 @@ app.get("/", (req, res) => {
 //trying to add new path for form submission
 app.get("/form", (req, res) =>{
   res.status(200);
-  res.render('index');
-})
+  res.render('index', {data:wishlist});
+});
 
 //handler for all other paths
 app.get("*", (req, res) => {
   res.status(404);
   res.send("<h1>Page Not Found!!</h1>");
+});
+
+//handler for POST requests
+app.post('/', (req, res) =>{
+  //var holding user submission
+  const newitem = req.body;
+  //add to array
+  wishlist.push({"item": newitem.myitem});
+  //render new view + updated array
+  res.render('index', {data:wishlist});
 });
 
 //Binding the app object to server on specified port
