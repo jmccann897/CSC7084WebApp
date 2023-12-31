@@ -29,8 +29,14 @@ app.get("/", (req, res) => {
   res.status(200);
   /*If using static html - use sendFile to rel path
   res.sendFile(__dirname+ '/html/welcome.html');*/
-  res.render('mytemplate', {title: "Class Alumni List:2023", data});
+  res.render('mytemplate', {title: "Dashboard data page", data});
 });
+
+//trying to add new path for form submission
+app.get("/form", (req, res) =>{
+  res.status(200);
+  res.render('index');
+})
 
 //handler for all other paths
 app.get("*", (req, res) => {

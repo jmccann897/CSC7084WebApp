@@ -1,0 +1,106 @@
+/*This css file relates to the form page*/
+body {
+    margin:0;
+    font-family: Geneva, Verdana, sans-serif;
+    background-image: url('background3.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin-bottom: 100px;
+}
+
+main {
+    width: 85%;
+    margin: 0 auto;
+    padding-top: 30px;
+}
+
+.header {
+    padding: 40px;
+    background-color: #CC231E;
+}
+
+.header .title {
+    font-family: 'Mountains of Christmas';
+    margin-left: 10px;
+    font-size: x-large;
+    color: white;
+    text-align:center;
+}
+
+.footer {
+    position:fixed;
+    bottom: 0;
+    height: 10px;
+    width: 100%;
+    padding: 40px;
+    background-color: #CC231E;
+}
+
+.footer .title {
+    font-family: 'Mountains of Christmas';
+    margin-left: 10px;
+    font-size: medium;
+    color:white;
+    text-align: center;
+}
+
+.flex-container {
+    display:flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+}
+
+.flex-item {
+    flex-basis: 20%;
+    padding: 20px;
+    width: 80px;
+    border: thin solid #CC231E;
+    border-radius: 4px;
+    margin: 10px;
+    background-color: aliceblue;
+    opacity: 0.75;
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-basis: 100%;
+}
+
+.flex-input {
+    padding: 20px;
+    margin: 10px;
+    width: 100%;
+}
+
+.flex-button {
+    padding: 20px;
+    margin: 10px;
+}
+
+input[type=text] {
+    width: inherit;
+    padding: 20px;
+    box-sizing: border-box;
+    border: thin solid #CC231E;
+    border-radius: 4px;
+    background-color: #34A65F;
+    color: white;
+    outline: none;
+    font-size: large;
+}
+
+::placeholder {
+    color: lightgray;
+}
+
+input[type=submit]{
+    padding: 20px;
+    box-sizing: border-box;
+    border: thin solid #CC231E;
+    border-radius: 4px;
+    background-color: #F5624D;
+    color: white;
+    text-decoration: none;
+    font-size: large;
+}
