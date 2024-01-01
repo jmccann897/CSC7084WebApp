@@ -51,6 +51,25 @@ app.get("/form", (req, res) =>{
   res.render('index', {data:wishlist});
 });
 
+//route for login
+app.get("/login", (req,res) => {
+  res.status(200);
+  res.render('login')
+})
+
+//route for dashboard
+app.get("/dash", (req,res) => {
+  res.status(200);
+  res.render('dash')
+})
+
+//route for signup
+app.get("/signup", (req,res) => {
+  res.status(200);
+  res.render('signup')
+})
+
+
 //handler for all other paths
 app.get("*", (req, res) => {
   res.status(404);
