@@ -1,9 +1,12 @@
 const express = require("express");
 const morgan = require("morgan");
 const PORT = 3000;
+const router = require('./routes/routes');
 
 
-/*Array of JSON objects*/
+/*Array of JSON objects
+Unsure where this should be stored as needs accessed at route stage.
+This data can come from a database - but rendered by views*/
 const wishlist = [
   {"item": "Playstation 5"},
   {"item": "Sci fi novels"},
@@ -36,55 +39,8 @@ app.use(morgan("tiny"));
 extended allows for arrays eg JSON arrays*/
 app.use(express.urlencoded({extended: true}));
 
-//Routing - should be in own file structure
-//route handler for http GET requests for default / paths
-app.get("/", (req, res) => {
-  res.status(200);
-  /*If using static html - use sendFile to rel path
-  res.sendFile(__dirname+ '/html/welcome.html');*/
-  res.render('mytemplate', {title: "Dashboard data page", data});
-});
-
-//trying to add new path for form submission
-app.get("/form", (req, res) =>{
-  res.status(200);
-  res.render('index', {data:wishlist});
-});
-
-//route for login
-app.get("/login", (req,res) => {
-  res.status(200);
-  res.render('login')
-})
-
-//route for dashboard
-app.get("/dash", (req,res) => {
-  res.status(200);
-  res.render('dash')
-})
-
-//route for signup
-app.get("/signup", (req,res) => {
-  res.status(200);
-  res.render('signup')
-})
-
-
-//handler for all other paths
-app.get("*", (req, res) => {
-  res.status(404);
-  res.send("<h1>Page Not Found!!</h1>");
-});
-
-//handler for POST requests
-app.post('/', (req, res) =>{
-  //var holding user submission
-  const newitem = req.body;
-  //add to array
-  wishlist.push({"item": newitem.myitem});
-  //render new view + updated array
-  res.render('index', {data:wishlist});
-});
+//routing --> handled in routes.js
+app.use('/', router);
 
 //Binding the app object to server on specified port
 app.listen(PORT, (err) => {
