@@ -106,7 +106,7 @@ input[type=submit]{
 }
 
 /*Media rules for adjusting div items 
-through .flex-item class to improve display */
+through .flex-item class to improve display*/
 @media only screen and (max-width: 1458px){
     .flex-item{
         padding: 20px 60px;
@@ -132,3 +132,7 @@ through .flex-item class to improve display */
         flex-basis: 100%;
     }
 }
+
+.fb-padding {
+    gap: 20px
+   }
