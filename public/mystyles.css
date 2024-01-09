@@ -2,9 +2,11 @@
 body {
     margin:0;
     font-family: Geneva, Verdana, sans-serif;
+    /*
     background-image: url('background3.jpg');
     background-repeat: no-repeat;
     background-size: cover;
+    */
     margin-bottom: 100px;
 }
 
@@ -132,7 +134,3 @@ through .flex-item class to improve display*/
         flex-basis: 100%;
     }
 }
-
-.fb-padding {
-    gap: 20px
-   }

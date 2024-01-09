@@ -1,18 +1,8 @@
 const express = require("express");
 const morgan = require("morgan");
+const mysql = require('mysql2');
 const PORT = 3000;
 const router = require('./routes/routes');
-
-
-/*Array of JSON objects
-Unsure where this should be stored as needs accessed at route stage.
-This data can come from a database - but rendered by views*/
-const wishlist = [
-  {"item": "Playstation 5"},
-  {"item": "Sci fi novels"},
-  {"item": "Selection box"},
-  {"item": "Guitar"}
-];
 
 //creating express object rep our app
 const app = express(); 
@@ -34,9 +24,13 @@ const data = JSON.parse(
 );
 
 //provides minimal http req info logging
-app.use(morgan("tiny")); 
+app.use(morgan("tiny"));
+
+//db connection
+
 /*parser for incoming requests with URL encoding
 extended allows for arrays eg JSON arrays*/
+app.use(express.json()); //for parsing app/json
 app.use(express.urlencoded({extended: true}));
 
 //routing --> handled in routes.js
@@ -46,5 +40,4 @@ app.use('/', router);
 app.listen(PORT, (err) => {
   if (err) return console.log(err);
   console.log(`Express Web Server listening on http://localhost:${PORT}`);
-  console.log(__dirname);
 });
