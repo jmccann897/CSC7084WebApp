@@ -1,8 +1,9 @@
 const express = require("express");
 const morgan = require("morgan");
 const mysql = require('mysql2');
-const PORT = 3000;
+const dotenv = require('dotenv').config({path:'./config.env'});
 const router = require('./routes/routes');
+const path = require('path');
 
 //creating express object rep our app
 const app = express(); 
@@ -37,7 +38,7 @@ app.use(express.urlencoded({extended: true}));
 app.use('/', router);
 
 //Binding the app object to server on specified port
-app.listen(PORT, (err) => {
+app.listen(process.env.PORT, (err) => {
   if (err) return console.log(err);
-  console.log(`Express Web Server listening on http://localhost:${PORT}`);
+  console.log(`Express Web Server listening on http://localhost:${process.env.PORT}`);
 });

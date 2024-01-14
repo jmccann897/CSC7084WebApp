@@ -45,14 +45,14 @@ router.post("/login", (req, res) =>{
 //route for dashboard
 router.get("/dash", (req, res) => {
   //adding in sql reading -- NEED TO DO A JOIN QUERY TO GET DATES AND SCORES
-  const selectSQL = `SELECT * FROM  snapshot 
-  INNER JOIN snapshot_emotion 
-  ON snapshot.snapshot_id = snapshot_emotion.snapshot_id`; 
+  const selectSQL = 'SELECT * FROM  snapshot INNER JOIN snapshot_emotion ON snapshot.snapshot_id = snapshot_emotion.snapshot_id INNER JOIN trigger_context ON snapshot.trigger_id = trigger_context.trigger_id'; 
   conn.query(selectSQL, (err, rows) =>{
     if(err) {
       throw err;
     } else {
+      console.log(rows);
       res.render('dash', {history: rows});
+      
     };
 });
 });
@@ -73,27 +73,14 @@ router.get("/addsnap", (req, res) =>{
 //route for post form sub in addsnap
 router.post("/addsnap", (req, res) => {
   const data = req.body;
-  console.log(data);  
-
   const {happiness, sadness, anger, 
     disgust, contempt, surprise, 
     fear, context} = req.body; //destructing must match names
-
   const trigger_vals = [context, 2];
   const date_added = new Date().toISOString().slice(0, 19).replace('T', ' ');
   const snapshot_vals = ['fake_img.url',date_added, 1];
-  const snap_hap_vals =[1, parseInt(happiness)];
-  const snap_sad_vals =[2, parseInt(sadness)];
-  const snap_dis_vals =[3, parseInt(disgust)];
-  const snap_con_vals =[4, parseInt(contempt)];
-  const snap_ang_vals =[5, parseInt(anger)];
-  const snap_fear_vals =[6, parseInt(fear)];
-  const snap_surp_vals =[7, parseInt(surprise)];
   const vals=[1, parseInt(happiness), 2, parseInt(sadness), 3, parseInt(disgust), 4, parseInt(contempt), 5, parseInt(anger), 6, parseInt(fear), 7, parseInt(surprise)];
   
-  
-
-  console.log(vals);
   // Trigger insert works when separated out but snapshot doesnt
   // online they say LAST_INSERT_ID() doesnt work as has connection scope
   //need to bring into one connection via one query. 
@@ -102,40 +89,38 @@ router.post("/addsnap", (req, res) => {
 
   conn.beginTransaction(function(err){
     if(err) {throw err;}
-    
+    //trigger_context insert
     var triggerSQLinsert = 'INSERT INTO trigger_context (trigger_description, icon_id) VALUES (?,?);';
-
-    conn.query(triggerSQLinsert,trigger_vals, function(err, res){
+    conn.query(triggerSQLinsert,trigger_vals, function(err, results){
       if(err){
         return conn.rollback(function(){
           console.log("Trigger insert error: "+err);
           throw err;
         });
-        console.log("Trigger_context "+res.insertId+" added");
+        console.log("Trigger_context "+results.insertId+" added");
       }
       //get auto incremented value from above insert
-      var rowID = res.insertId;
+      var rowID = results.insertId;
+      //snapshot insert
       var snapshotSQLinsert = 'INSERT INTO snapshot (image_url, datetime, user_id, trigger_id) VALUES (?,?,?,'+rowID+');';
-
-      conn.query(snapshotSQLinsert, snapshot_vals, function(err, res){
+      conn.query(snapshotSQLinsert, snapshot_vals, function(err, results){
         if (err) {
           return conn.rollback(function(){
             console.log("Snapshot insert error: "+err);
             throw err;
           });
-          console.log("Snapshot "+res.insertId+" added");
+          console.log("Snapshot "+results.insertId+" added");
         }
         //get auto incremented value from above insert
-        var rowID2 = res.insertId;
+        var rowID2 = results.insertId;
+        //snapshot_emotion inserts
         var snapshot_emotionSQLinsert = 'INSERT INTO snapshot_emotion (snapshot_id, emotion_id, score) VALUES ('+rowID2+',?,?), ('+rowID2+',?,?), ('+rowID2+',?,?), ('+rowID2+',?,?), ('+rowID2+',?,?), ('+rowID2+',?,?), ('+rowID2+',?,?)';
-
-        conn.query(snapshot_emotionSQLinsert, vals, function(err, res){
+        conn.query(snapshot_emotionSQLinsert, vals, function(err, results){
           if (err){
             return conn.rollback(function(){
               console.log("Snap_Emotion insert error: "+err);
               throw err;
             });
-            
           }
           conn.commit(function(err) {
             if (err) {
@@ -143,13 +128,12 @@ router.post("/addsnap", (req, res) => {
                 throw err;
               });
             }
-            console.log('success!');
+            console.log('Snapshot insert success!');
         })
-        //close connection --> this caused an issue with moving to other routes
-        //conn.end();
       });
     });
   });
+  res.redirect('/');
 });
 });
 

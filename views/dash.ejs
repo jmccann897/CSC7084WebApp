@@ -39,6 +39,7 @@
               <th scope="col">Anger</th>
               <th scope="col">Fear</th>
               <th scope="col">Surprise</th>
+              <th scope="col">Context</th>
             </tr>
           </thead>
           <tbody>
@@ -48,8 +49,7 @@
             <% let id_max = history.reduce((acc, value) => { %>
                 <% return (acc = acc > value.snapshot_id ? acc: value.snapshot_id); %>
             <% }, 0); %>
-            <% let dateGen = new Date().toISOString().slice(0, 19).replace('T', ' '); %>
-            <% console.log(dateGen); %>
+            
             <% let happy_score =0; %>
             <% let sad_score =0; %>
             <% let disgust_score =0; %>
@@ -57,6 +57,8 @@
             <% let anger_score =0; %>
             <% let fear_score =0; %>
             <% let surprise_score =0; %>
+            <% let formatteddate = new Date('1995-12-17T03:24:00'); %>
+            <% let context_text = 'default'; %>
 
             <!--Loop through history per id_count from 0 to id_max-->
             <% for (let i =1; i <= id_max; i++){ %>
@@ -67,7 +69,6 @@
                 <!--If data, then set date & scores and output-->
                 <!-- Looping through history filtered to snapID-->
                 <% data_array.forEach((row) =>{ %>
-                              
                     <% let emotion_name =""; %>
                     <% if(row.emotion_id === 3){ %>
                       <% emotion_name = "happinness"; %>
@@ -103,13 +104,16 @@
                       <% emotion_name = "surprise"; %>
                       <% surprise_score = row.score; %>
                     <% } %>
+                    <% var rawdate = new Date(row.datetime); %>
+                    <% formatteddate = new Intl.DateTimeFormat('en-GB',dateformat).format(rawdate); %>
+                    <% context_text = row.trigger_description; %>
+                    
                 <% }); %>
 
                 <!--Outputting-->
                 <tr>
-
-                  <% var rawdate = new Date(history[0].datetime); %>
-                  <% var formatteddate = new Intl.DateTimeFormat('en-GB',dateformat).format(rawdate); %>
+                  <!-- Need to update so takes the date from the snapID-->
+                  
                       <td><%= formatteddate %></td>
                       <td><%= i %></td>
                       <td><%= happy_score %></td>
@@ -119,6 +123,7 @@
                       <td><%= anger_score %></td>
                       <td><%= fear_score %></td>
                       <td><%= surprise_score %></td>
+                      <td><%= context_text %></td>
                 </tr>
 
             <% } %>
