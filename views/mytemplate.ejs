@@ -60,7 +60,7 @@
 
             <!--Loop through history per id_count from 0 to id_max-->
             <% for (let i =1; i <= id_max; i++){ %>
-                <% console.log(i); %>
+                
                 <% const data_array = history.filter((row) => row.snapshot_id === i); %>
 
                 <!--If no data points +1 to id_count-->

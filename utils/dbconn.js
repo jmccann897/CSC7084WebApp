@@ -15,4 +15,5 @@ db.connect((err) => {
     console.log(`Database connection successful!`);
 });
 
+
 module.exports = db;

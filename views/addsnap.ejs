@@ -28,18 +28,15 @@
         <%- include('nav'); %>
       </div>
     
-
 <div class=".container">
     <div class="m-3 border border-primary">
-      <form action="/addsnap" method="post" name="snapshot">
+      <form action="" method="post" name="snapshot">
         
         <!-- Dropdown menu-->
         <%- include('dropdown'); %>
         
-        
-
         <!-- Some text input for context-->
-        <div class="mb-3">
+        <div class="m-3">
           <label for="exampleFormControlTextarea1" class="form-label">Provide some context to your feelings</label>
           <textarea class="form-control" id="context" rows="3" name="context"></textarea>
         </div>
@@ -54,13 +51,5 @@
       </form>
     </div>
 </div>
-
-
-
-    
-
-
-
-    <%- include('footer'); %>
   </body>
 </html>
