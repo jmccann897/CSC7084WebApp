@@ -14,15 +14,43 @@ const viewdir = path.join(__dirname,'..', 'ejs');
 //Routing - should be in own file structure
 //route handler for http GET requests for default / paths
 router.get("/", (req, res) => {
-  const SQLquery = `SELECT * FROM  snapshot 
+  //adding in sql reading -- NEED TO DO A JOIN QUERY TO GET DATES AND SCORES
+  const selectSQL = `SELECT * FROM  snapshot 
   INNER JOIN snapshot_emotion 
-  ON snapshot.snapshot_id = snapshot_emotion.snapshot_id`;
-  conn.query(SQLquery, (err, rows) =>{
-    if(err){
+  ON snapshot.snapshot_id = snapshot_emotion.snapshot_id 
+  INNER JOIN trigger_context 
+  ON snapshot.trigger_id = trigger_context.trigger_id`; 
+  conn.query(selectSQL, (err, rows) =>{
+    if(err) {
       throw err;
-    } else{
-      res.render('mytemplate', {history:rows});
+    } else {
+      console.log(rows);
+      res.render('mytemplate', {history: rows});
+      
     };
+});
+});
+
+//route for editing 
+router.get('/edit/:id', (req,res) =>{
+  //decontruct params to get snapID
+  const { id } = req.params;
+  console.log(id);
+
+  const selectforEditSQL = `SELECT * FROM  snapshot 
+  INNER JOIN snapshot_emotion 
+  ON snapshot.snapshot_id = snapshot_emotion.snapshot_id 
+  INNER JOIN trigger_context 
+  ON snapshot.trigger_id = trigger_context.trigger_id 
+  WHERE snapshot.snapshot_id = '${id}'`;
+
+  conn.query(selectforEditSQL, (err, rows) =>{
+    if (err){
+      throw err;
+    } else {
+      
+      res.render("editsnap", {details: rows} );
+    }
   });
 });
 
@@ -45,7 +73,11 @@ router.post("/login", (req, res) =>{
 //route for dashboard
 router.get("/dash", (req, res) => {
   //adding in sql reading -- NEED TO DO A JOIN QUERY TO GET DATES AND SCORES
-  const selectSQL = 'SELECT * FROM  snapshot INNER JOIN snapshot_emotion ON snapshot.snapshot_id = snapshot_emotion.snapshot_id INNER JOIN trigger_context ON snapshot.trigger_id = trigger_context.trigger_id'; 
+  const selectSQL = `SELECT * FROM  snapshot 
+  INNER JOIN snapshot_emotion 
+  ON snapshot.snapshot_id = snapshot_emotion.snapshot_id 
+  INNER JOIN trigger_context 
+  ON snapshot.trigger_id = trigger_context.trigger_id`; 
   conn.query(selectSQL, (err, rows) =>{
     if(err) {
       throw err;
@@ -56,7 +88,6 @@ router.get("/dash", (req, res) => {
     };
 });
 });
-
 
 //route for signup
 router.get("/signup", (req, res) => {
@@ -90,7 +121,8 @@ router.post("/addsnap", (req, res) => {
   conn.beginTransaction(function(err){
     if(err) {throw err;}
     //trigger_context insert
-    var triggerSQLinsert = 'INSERT INTO trigger_context (trigger_description, icon_id) VALUES (?,?);';
+    var triggerSQLinsert = `INSERT INTO trigger_context (trigger_description, icon_id) 
+      VALUES (?,?);`;
     conn.query(triggerSQLinsert,trigger_vals, function(err, results){
       if(err){
         return conn.rollback(function(){
@@ -102,7 +134,8 @@ router.post("/addsnap", (req, res) => {
       //get auto incremented value from above insert
       var rowID = results.insertId;
       //snapshot insert
-      var snapshotSQLinsert = 'INSERT INTO snapshot (image_url, datetime, user_id, trigger_id) VALUES (?,?,?,'+rowID+');';
+      var snapshotSQLinsert = `INSERT INTO snapshot (image_url, datetime, user_id, trigger_id) 
+      VALUES (?,?,?,${rowID});`;
       conn.query(snapshotSQLinsert, snapshot_vals, function(err, results){
         if (err) {
           return conn.rollback(function(){
@@ -114,7 +147,9 @@ router.post("/addsnap", (req, res) => {
         //get auto incremented value from above insert
         var rowID2 = results.insertId;
         //snapshot_emotion inserts
-        var snapshot_emotionSQLinsert = 'INSERT INTO snapshot_emotion (snapshot_id, emotion_id, score) VALUES ('+rowID2+',?,?), ('+rowID2+',?,?), ('+rowID2+',?,?), ('+rowID2+',?,?), ('+rowID2+',?,?), ('+rowID2+',?,?), ('+rowID2+',?,?)';
+        var snapshot_emotionSQLinsert = `INSERT INTO snapshot_emotion (snapshot_id, emotion_id, score) 
+        VALUES (${rowID2},?,?), (${rowID2},?,?), (${rowID2},?,?), (${rowID2},?,?), 
+        (${rowID2},?,?), (${rowID2},?,?), (${rowID2},?,?)`;
         conn.query(snapshot_emotionSQLinsert, vals, function(err, results){
           if (err){
             return conn.rollback(function(){
@@ -136,9 +171,6 @@ router.post("/addsnap", (req, res) => {
   res.redirect('/');
 });
 });
-
-
- 
 
 //handler for all other paths --> 404 is static so could use Sendfile to a separate HTML file
 router.get("*", (req, res) => {

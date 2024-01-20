@@ -1,4 +1,4 @@
-<!-- Currently a form submission template but needs to be the list -->
+<!-- dev page -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -27,7 +27,7 @@
     <!-- Historical data table -->
     <div class=".container border border-danger">
       <div class="bd-example">
-        <table class="table table-hover" id="history">
+        <table class="table table-hover table-sm" id="history">
           <thead>
             <tr>
               <th scope="col">Datetime</th>
@@ -39,6 +39,8 @@
               <th scope="col">Anger</th>
               <th scope="col">Fear</th>
               <th scope="col">Surprise</th>
+              <th scope="col">Context</th>
+              <th scope="col"></th>
             </tr>
           </thead>
           <tbody>
@@ -49,7 +51,6 @@
                 <% return (acc = acc > value.snapshot_id ? acc: value.snapshot_id); %>
             <% }, 0); %>
             
-            
             <% let happy_score =0; %>
             <% let sad_score =0; %>
             <% let disgust_score =0; %>
@@ -57,10 +58,12 @@
             <% let anger_score =0; %>
             <% let fear_score =0; %>
             <% let surprise_score =0; %>
+            <% let formatteddate = new Date('1995-12-17T03:24:00'); %>
+            <% let context_text = 'default'; %>
+            <% let snapID = 0; %>
 
             <!--Loop through history per id_count from 0 to id_max-->
             <% for (let i =1; i <= id_max; i++){ %>
-                
                 <% const data_array = history.filter((row) => row.snapshot_id === i); %>
 
                 <!--If no data points +1 to id_count-->
@@ -68,7 +71,6 @@
                 <!--If data, then set date & scores and output-->
                 <!-- Looping through history filtered to snapID-->
                 <% data_array.forEach((row) =>{ %>
-                              
                     <% let emotion_name =""; %>
                     <% if(row.emotion_id === 3){ %>
                       <% emotion_name = "happinness"; %>
@@ -104,13 +106,17 @@
                       <% emotion_name = "surprise"; %>
                       <% surprise_score = row.score; %>
                     <% } %>
+                    <% var rawdate = new Date(row.datetime); %>
+                    <% formatteddate = new Intl.DateTimeFormat('en-GB',dateformat).format(rawdate); %>
+                    <% context_text = row.trigger_description; %>
+                    <% snapID = row.snapshot_id; %>
+                    
                 <% }); %>
 
                 <!--Outputting-->
                 <tr>
-
-                  <% var rawdate = new Date(history[0].datetime); %>
-                  <% var formatteddate = new Intl.DateTimeFormat('en-GB',dateformat).format(rawdate); %>
+                  <!-- Need to update so takes the date from the snapID-->
+                  
                       <td><%= formatteddate %></td>
                       <td><%= i %></td>
                       <td><%= happy_score %></td>
@@ -120,50 +126,25 @@
                       <td><%= anger_score %></td>
                       <td><%= fear_score %></td>
                       <td><%= surprise_score %></td>
+                      <td><%= context_text %></td>
+                      <td>
+
+                        <div class="col">
+                          <a href='/edit/<%= snapID %>' class="btn btn-outline-primary"
+                           type="submit" value="Edit">Edit</a>
+                           <a href='/del/<%= snapID %>' class="btn btn-outline-danger"
+                           type="submit" value="Delete">Delete</a>
+                        </div>
+                        
+                        
+                      </td>
                 </tr>
 
             <% } %>
-                   
+                  
           </tbody>
         </table>
-        <script>
-
-          var savedArray = JSON.parse($)
-          
-          buildtable(history);
-          
-          function buildtable(history){
-            
-            for(let row of history){
-              var snapshotid = row.snapshot_id;
-              var emotionid = row.emotion_id;
-              var score = row.score;
-              var snapdate = row.datetime;
-              var inputdate = new Date (snapdate);
-
-              const year = inputdate.getFullYear();
-              const month = (inputdate.getMonth()+1).toString().padStart(2,"0");
-              const day = inputdate.getDate().toString().padStart(2,"0");
-              var formattedDate = `${year} - ${month}-${day}`;
-
-              var table = document.getElementById("history");
-              var row = `<tr>
-                            <td>${formattedDate}</td>
-                            <td>${snapshotid}</td>
-                            <td>${emotionid}</td>
-                            <td>${score}</td>
-                         </tr>`
-              table.innerHTML += row
-            }
-          };
-        
-          
-          
-
-        </script>
       </div>
     </div>
-
-   
   </body>
 </html>

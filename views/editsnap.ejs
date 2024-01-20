@@ -1,0 +1,72 @@
+<!-- Form submission for new snapshot context-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Snapshot</title>
+    <link 
+    rel="stylesheet" 
+    href="mystyles.css" 
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>    
+
+        <div class=".container">
+            <div class=".container">
+            <%- include('nav'); %>
+            </div>
+        
+
+            <!-- JS-->
+            <% let happy_score = 3; %>
+            <% let sad_score = 3; %>
+            <% let anger_score = 3; %>
+            <% let disgust_score = 3; %>
+            <% let contempt_score = 3; %>
+            <% let surprise_score = 3; %>
+            <% let fear_score = 3; %>
+
+
+
+            <div class=".container">
+                <div class="m-3 border border-primary">
+                    <!-- Show emotion values associated with entry-->
+                    <%- include('selecteddropdown', {happy_score, sad_score, anger_score, disgust_score, contempt_score, surprise_score, fear_score}); %>
+                    
+                    
+                    
+
+                    <form action="" method="post" name="snapshot">
+                        
+                        <!-- Some text input for context-->
+                        <div class="m-3">
+                        <label for="exampleFormControlTextarea1" class="form-label">Update the context</label>
+                        <textarea class="form-control" id="context" rows="3" name="context"></textarea>
+                        </div>
+
+                        <!--Button-->
+                        <!-- context needs placed before submit button otherwise post doesnt pick it up-->
+                        <div class="flex-button">
+                        <input type="submit" value="Edit"/>
+                        </div>
+                    
+
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
