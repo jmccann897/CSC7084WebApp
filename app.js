@@ -2,6 +2,7 @@ const express = require("express");
 const morgan = require("morgan");
 const mysql = require('mysql2');
 const dotenv = require('dotenv').config({path:'./config.env'});
+const session = require('express-session');
 const router = require('./routes/routes');
 const path = require('path');
 
@@ -33,6 +34,13 @@ app.use(morgan("tiny"));
 extended allows for arrays eg JSON arrays*/
 app.use(express.json()); //for parsing app/json
 app.use(express.urlencoded({extended: true}));
+
+//initialising session middleware - prior to router
+app.use(session({
+  secret:'mysecretstring1234', //used to sign hash that is stored as session id in the cookie passed to client
+  resave: false, // indicates session won't save on every req made
+  saveUninitialized: false // indicates no session saved for a req that doesn't need to save sessions
+}));
 
 //routing --> handled in routes.js
 app.use('/', router);

@@ -11,7 +11,7 @@ const conn = require('./../utils/dbconn');
       if(err) {
         throw err;
       } else {
-        console.log(rows);
+        //console.log(rows);
         res.render('dash', {history: rows});
       };
   });
@@ -19,22 +19,31 @@ const conn = require('./../utils/dbconn');
   
   //route for getEdit
   exports.getEdit = (req, res) =>{
-    //decontruct params to get snapID
-    const { id } = req.params;
-    //console.log(id);
-    const selectforEditSQL = `SELECT * FROM  snapshot 
-    INNER JOIN snapshot_emotion 
-    ON snapshot.snapshot_id = snapshot_emotion.snapshot_id 
-    INNER JOIN trigger_context 
-    ON snapshot.trigger_id = trigger_context.trigger_id 
-    WHERE snapshot.snapshot_id = ? `;
-    conn.query(selectforEditSQL, id, (err, rows) =>{
-      if (err){
-        throw err;
-      } else {
-         res.render("editsnap", {details: rows} );
-      }
-    });
+
+    const { isloggedin } = req.session;
+    console.log(`User logged in: ${isloggedin}`);
+
+    if(isloggedin){
+       //decontruct params to get snapID
+      const { id } = req.params;
+     
+      const selectforEditSQL = `SELECT * FROM  snapshot 
+      INNER JOIN snapshot_emotion 
+      ON snapshot.snapshot_id = snapshot_emotion.snapshot_id 
+      INNER JOIN trigger_context 
+      ON snapshot.trigger_id = trigger_context.trigger_id 
+      WHERE snapshot.snapshot_id = ? `;
+      conn.query(selectforEditSQL, id, (err, rows) =>{
+        if (err){
+          throw err;
+        } else {
+          //console.log(rows);
+          res.render("editsnap", {details: rows} );
+        }
+      });
+    } else {
+      res.redirect('/');
+    }   
   };
   
   //route for postEdit
@@ -107,21 +116,62 @@ const conn = require('./../utils/dbconn');
     res.status(200);
     res.render("login");
   };
+
+  exports.postLogin = (req,res) => {
+    res.status(200);
+
+    const { email, userpass } = req.body;
+    const vals = [email, userpass];
+    console.log(vals);
+
+    const checkuserSQL = `SELECT * FROM reg_user 
+    WHERE email = ? AND password = ?`;
+
+    conn.query(checkuserSQL, vals, (err,rows) =>{
+      if(err) throw err;
+
+      str = JSON.stringify(rows);
+      console.log(str);
+      const numrows = rows.length;
+      console.log(`This is numrows: ${numrows}`);
+
+      const session = req.session;
+      console.log(session);
+      
+      if(numrows>0){
+        session.isloggedin = true;
+        res.redirect('/');
+      }else{
+        session.isloggedin = false;
+        res.redirect('/');
+      }
+    });
+  };
+
+  exports.getLogout = (req,res) => {
+    req.session.destroy(() =>{
+      res.redirect('/');
+    });
+  };
   
   //route for getDash
   exports.getDash = (req, res) => {
-    //adding in sql reading -- NEED TO DO A JOIN QUERY TO GET DATES AND SCORES
+    //checking login status to alter view dynamically
+    const { isloggedin } = req.session;
+    console.log(`User logged in: ${isloggedin}`);
+
     const selectSQL = `SELECT * FROM  snapshot 
     INNER JOIN snapshot_emotion 
     ON snapshot.snapshot_id = snapshot_emotion.snapshot_id 
     INNER JOIN trigger_context 
     ON snapshot.trigger_id = trigger_context.trigger_id`; 
+    
     conn.query(selectSQL, (err, rows) =>{
       if(err) {
         throw err;
       } else {
-        console.log(rows);
-        res.render('dash', {history: rows});
+        //console.log(rows);
+        res.render('dash', {history: rows, loggedin: isloggedin});
         
       };
   });
@@ -135,8 +185,14 @@ const conn = require('./../utils/dbconn');
   
   //route for getAddsnap
   exports.getAddsnap = (req, res) =>{
-    res.status(200);
-    res.render("addsnap");
+    const { isloggedin } = req.session;
+    console.log(`User logged in: ${isloggedin}`);
+
+    if(isloggedin){
+      res.render('addsnap');
+    }else{
+      res.redirect('/');
+    }
   };
   
   //route for postAddsnap
