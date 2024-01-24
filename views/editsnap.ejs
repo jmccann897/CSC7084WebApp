@@ -73,7 +73,7 @@
                     <!-- Show emotion values associated with entry-->
                     <%- include('selecteddropdown', {happy_score, sad_score, anger_score, disgust_score, contempt_score, surprise_score, fear_score}); %>
                                         
-                    <form action="" method="post" name="snapshot">
+                    <form action="/edit/:id" method="post" name="snapshot">
                         
                         <!-- Allow editing of context-->
                         <div class="m-3">
