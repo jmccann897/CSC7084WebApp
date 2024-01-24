@@ -129,8 +129,6 @@ get404
 
   //route for postLogin
   exports.postLogin = (req,res) => {
-    res.status(200);
-
     const { email, userpass } = req.body;
     const vals = [email, userpass];
     console.log(vals);
@@ -145,15 +143,13 @@ get404
       console.log(str);
       const numrows = rows.length;
       console.log(`This is numrows: ${numrows}`);
-
-      const session = req.session;
-      console.log(session);
       
       if(numrows>0){
+        const session = req.session;
         session.isloggedin = true;
-        res.redirect('/');
+        console.log(session);
+        res.redirect('/dash');
       }else{
-        session.isloggedin = false;
         res.redirect('/');
       }
     });
