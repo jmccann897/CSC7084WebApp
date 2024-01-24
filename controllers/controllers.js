@@ -1,4 +1,19 @@
 const conn = require('./../utils/dbconn');
+/* Structure
+getDefault
+getEdit
+postEdit
+postDelete
+getLogin
+postLogin
+getLogout
+getDash
+getSignUp
+getAddsnap
+postAddsnap
+get404
+*/
+
 
  //Default route handler - getDefault
  exports.getDefault =  (req, res) => {
@@ -104,12 +119,7 @@ const conn = require('./../utils/dbconn');
       });
     });
   };
-  
-  //route for getForm
-  exports.getForm = (req, res) => {
-    res.status(200);
-    res.render("index", { data: wishlist });
-  };
+
   
   //route for getLogin
  exports.getLogin = (req, res) => {
@@ -117,6 +127,7 @@ const conn = require('./../utils/dbconn');
     res.render("login");
   };
 
+  //route for postLogin
   exports.postLogin = (req,res) => {
     res.status(200);
 
@@ -147,7 +158,8 @@ const conn = require('./../utils/dbconn');
       }
     });
   };
-
+ 
+  //route for getLogout
   exports.getLogout = (req,res) => {
     req.session.destroy(() =>{
       res.redirect('/');
@@ -206,11 +218,11 @@ const conn = require('./../utils/dbconn');
     const snapshot_vals = ['fake_img.url',date_added, 1];
     const vals=[1, parseInt(happiness), 2, parseInt(sadness), 3, parseInt(disgust), 4, parseInt(contempt), 5, parseInt(anger), 6, parseInt(fear), 7, parseInt(surprise)];
     
-    // Trigger insert works when separated out but snapshot doesnt
-    // online they say LAST_INSERT_ID() doesnt work as has connection scope
+    /* Trigger insert works when separated out but snapshot doesnt
+    //online they say LAST_INSERT_ID() doesnt work as has connection scope
     //need to bring into one connection via one query. 
-    // look into multiple statements in one connection (https://stackoverflow.com/questions/23266854/node-mysql-multiple-statements-in-one-query)
-    // use connection.begin transaction 
+    //look into multiple statements in one connection (https://stackoverflow.com/questions/23266854/node-mysql-multiple-statements-in-one-query)
+    //use connection.begin transaction */
   
     conn.beginTransaction(function(err){
       if(err) {throw err;}

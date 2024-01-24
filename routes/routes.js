@@ -9,7 +9,6 @@ const viewdir = path.join(__dirname,'..', 'ejs');
 //get routes
 router.get('/', controller.getDefault);
 router.get('/edit/:id', controller.getEdit);
-router.get('/form', controller.getForm);
 router.get('/login', controller.getLogin);
 router.get('/logout', controller.getLogout);
 router.get('/dash', controller.getDash);
