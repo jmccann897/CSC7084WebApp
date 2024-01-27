@@ -5,10 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Edit Snapshot</title>
-    <link 
-    rel="stylesheet" 
-    href="../public/mystyles.css" 
-    />
+    
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -73,7 +70,7 @@
                     <!-- Show emotion values associated with entry-->
                     <%- include('selecteddropdown', {happy_score, sad_score, anger_score, disgust_score, contempt_score, surprise_score, fear_score}); %>
                                         
-                    <form action="/edit/:id" method="post" name="snapshot">
+                    <form action="/edit/<%= snapID %>" method="post" name="snapshot">
                         
                         <!-- Allow editing of context-->
                         <div class="m-3">

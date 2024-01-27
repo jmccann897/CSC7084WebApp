@@ -52,8 +52,11 @@ exports.getDash = (req, res) => {
   const isloggedin = session.isloggedin;
   const user_id = session.user_id;
   const user_name = session.user_name;
-  const role = session.role;
-  
+  const user_role = session.role;
+  var userinfo ={name: user_name, role: user_role};
+  console.log(session);
+  console.log(userinfo);
+
   if (isloggedin) {
     const selectSQL = `SELECT * FROM  snapshot 
     INNER JOIN snapshot_emotion 
@@ -66,11 +69,11 @@ exports.getDash = (req, res) => {
       if (err) {
         throw err;
       } else {
-        res.render("dash", { history: rows, loggedin: isloggedin });
+        res.render("dash", { history: rows, loggedin: isloggedin, user: userinfo });
       }
     });
   } else {
-    res.render("login", { error: "You must first log in" });
+    res.render("login", {loggedin: false, error: "You must first log in",  });
   }
 };
 
@@ -78,6 +81,10 @@ exports.getDash = (req, res) => {
 //route for getEdit
 exports.getEdit = (req, res) => {
   const session = req.session;
+  const isloggedin = session.isloggedin;
+  const user_id = session.user_id;
+  const user_name = session.user_name;
+  const role = session.role;
 
   if (isloggedin) {
     //decontruct params to get snapID
@@ -94,19 +101,21 @@ exports.getEdit = (req, res) => {
       if (err) {
         throw err;
       } else {
-        //console.log(rows);
-        res.render("editsnap", { details: rows });
+        res.render("editsnap", { loggedin: isloggedin, details: rows });
       }
     });
   } else {
-    res.render("/login", { error: "You  must first log in" });
+    res.render("login", {loggedin: false, error: "You  must first log in" });
   }
 };
 
 //route for postEdit
 exports.postEdit = (req, res) => {
+  console.log(req.params.id);
   const snapshot_id = req.params.id;
+  console.log(snapshot_id);
   const trigger_description = req.body.context;
+  console.log(trigger_description);
   const updateVals = [trigger_description, snapshot_id];
   const updateSQL = `UPDATE trigger_context 
     INNER JOIN snapshot ON trigger_context.trigger_id = snapshot.trigger_id
@@ -116,6 +125,7 @@ exports.postEdit = (req, res) => {
     if (err) {
       throw err;
     } else {
+      console.log(rows);
       res.redirect("/dash");
     }
   });
@@ -167,10 +177,15 @@ exports.postDelete = (req, res) => {
 //route for getAddsnap
 exports.getAddsnap = (req, res) => {
   const session = req.session;
+  const isloggedin = session.isloggedin;
+  const user_id = session.user_id;
+  const user_name = session.user_name;
+  const role = session.role;
+  
   if (isloggedin) {
-    res.render("addsnap");
+    res.render("addsnap", {loggedin: isloggedin});
   } else {
-    res.render("login", { error: "You must first log in" });
+    res.render("login", {loggedin: false, error: "You must first log in" });
   }
 };
 

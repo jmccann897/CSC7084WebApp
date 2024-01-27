@@ -27,6 +27,11 @@
     <!-- Historical data table -->
     <div class=".container border border-danger">
       <div class="bd-example">
+        <% if (loggedin) { %>
+          <h1 class="h1"> <%= `${user.name}'s Data History` %></h1>
+        <% } else { %>
+          <h1 class="h1">Your Data History</h1>
+        <% } %>
         <table class="table table-hover table-sm" id="history">
           <thead>
             <tr>
