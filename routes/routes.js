@@ -12,7 +12,6 @@ router.get('/edit/:id', controller.getEdit);
 router.get('/login', controller.getLogin);
 router.get('/logout', controller.getLogout);
 router.get('/dash', controller.getDash);
-router.get('/signup', controller.getSignup);
 router.get('/addsnap', controller.getAddsnap);
 router.get('*', controller.get404);
 //post routes

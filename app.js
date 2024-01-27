@@ -1,6 +1,5 @@
 const express = require("express");
 const morgan = require("morgan");
-const mysql = require('mysql2');
 const dotenv = require('dotenv').config({path:'./config.env'});
 const session = require('express-session');
 const router = require('./routes/routes');
