@@ -24,6 +24,7 @@ exports.postLogin = (req, res) => {
   conn.query(checkuserSQL, vals, (err, rows) => {
     if (err) throw err;
     const numrows = rows.length;
+    console.log(numrows);
     if (numrows > 0) {
      const session = req.session;
       session.isloggedin = true;
@@ -34,7 +35,7 @@ exports.postLogin = (req, res) => {
       res.redirect("/dash");
     } else {
       console.log("Failed Login");
-      res.render("login", { error: "Incorrect login details" });
+      res.render("login", { loggedin: false, error: "Incorrect login details" });
     }
   });
 };
@@ -58,12 +59,22 @@ exports.getDash = (req, res) => {
   console.log(userinfo);
 
   if (isloggedin) {
-    const selectSQL = `SELECT * FROM  snapshot 
+    let selectSQL = '';
+    if(user_role == 'admin'){
+      selectSQL = `SELECT * FROM  snapshot 
     INNER JOIN snapshot_emotion 
     ON snapshot.snapshot_id = snapshot_emotion.snapshot_id 
     INNER JOIN trigger_context 
-    ON snapshot.trigger_id = trigger_context.trigger_id
-    WHERE user_id = ?`;
+    ON snapshot.trigger_id = trigger_context.trigger_id`;
+    } else { 
+      selectSQL = `SELECT * FROM  snapshot 
+      INNER JOIN snapshot_emotion 
+      ON snapshot.snapshot_id = snapshot_emotion.snapshot_id 
+      INNER JOIN trigger_context 
+      ON snapshot.trigger_id = trigger_context.trigger_id
+      WHERE user_id = ?`;
+    };
+    
     
     conn.query(selectSQL, user_id, (err, rows) => {
       if (err) {
