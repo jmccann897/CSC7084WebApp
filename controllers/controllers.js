@@ -1,4 +1,5 @@
 const conn = require("./../utils/dbconn");
+const axios = require('axios');
 const path = require('path');
 
 //Default route handler - getDefault
@@ -49,44 +50,45 @@ exports.getLogout = (req, res) => {
 
 //route for getDash
 exports.getDash = (req, res) => {
+  var userinfo ={};
+  const {isloggedin, user_id} = req.session;
   const session = req.session;
-  const isloggedin = session.isloggedin;
-  const user_id = session.user_id;
+  //const isloggedin = session.isloggedin;
+  //const user_id = session.user_id;
   const user_name = session.user_name;
   const user_role = session.role;
   var userinfo ={name: user_name, role: user_role};
   console.log(session);
   console.log(userinfo);
 
-  if (isloggedin) {
-    let selectSQL = '';
-    if(user_role == 'admin'){
-      selectSQL = `SELECT * FROM  snapshot 
-    INNER JOIN snapshot_emotion 
-    ON snapshot.snapshot_id = snapshot_emotion.snapshot_id 
-    INNER JOIN trigger_context 
-    ON snapshot.trigger_id = trigger_context.trigger_id`;
-    } else { 
-      selectSQL = `SELECT * FROM  snapshot 
-      INNER JOIN snapshot_emotion 
-      ON snapshot.snapshot_id = snapshot_emotion.snapshot_id 
-      INNER JOIN trigger_context 
-      ON snapshot.trigger_id = trigger_context.trigger_id
-      WHERE user_id = ?`;
-    };
-    
-    
-    conn.query(selectSQL, user_id, (err, rows) => {
-      if (err) {
-        throw err;
-      } else {
-        res.render("dash", { history: rows, loggedin: isloggedin, user: userinfo });
-      }
+  if (isloggedin && user_role == 'admin') {
+    const endpoint = `http://localhost:3002/dash/admin/${user_id}`;
+
+    axios
+    .get(endpoint)
+    .then((response) => {
+      const data = response.data.result;
+      res.render('dash', {history: data, loggedin: isloggedin, user:userinfo});
+    })
+    .catch((error) =>{
+      console.log(`Error making dash API request: ${error}`);
+      res.render('login', {loggedin: false, error: "You must first log in"});
     });
-  } else {
-    res.render("login", {loggedin: false, error: "You must first log in",  });
-  }
+} else if (isloggedin && user_role == 'user')  {
+  const endpoint = `http://localhost:3002/dash/users/${user_id}`;
+  axios
+    .get(endpoint)
+    .then((response) => {
+      const data = response.data.result;
+      res.render('dash', {history: data, loggedin: isloggedin, user:userinfo});
+    })
+    .catch((error) =>{
+      console.log(`Error making dash API request: ${error}`);
+      res.render('login', {loggedin: false, error: "You must first log in"});
+    });
 };
+};
+
 
 
 //route for getEdit
@@ -120,8 +122,9 @@ exports.getEdit = (req, res) => {
   }
 };
 
-//route for postEdit
+//route for postEdit 
 exports.postEdit = (req, res) => {
+  
   console.log(req.params.id);
   const snapshot_id = req.params.id;
   console.log(snapshot_id);
@@ -202,6 +205,24 @@ exports.getAddsnap = (req, res) => {
 
 //route for postAddsnap
 exports.postAddsnap = (req, res) => {
+  const vals = { 
+    happiness, sadness, anger, disgust,
+    contempt, surprise, fear, context
+  } = req.body;
+  const endpoint = `http://localhost:3002/addsnap`;
+
+  axios
+  .post(endpoint, vals)
+  .then((response) => {
+    const data = response.data;
+    console.log(data);
+    res.redirect('/');
+  })
+  .catch((error) => {
+    console.log(`Error making postAddSnap API request: ${error}`);
+  });
+
+/*
   const data = req.body;
   const {
     happiness, sadness, anger, disgust,
@@ -227,6 +248,7 @@ exports.postAddsnap = (req, res) => {
     7,
     parseInt(surprise),
   ];
+  */
 
   /* Trigger insert works when separated out but snapshot doesnt
     //online they say LAST_INSERT_ID() doesnt work as has connection scope
