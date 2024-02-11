@@ -33,38 +33,45 @@
             <% let contempt_score = 3; %>
             <% let surprise_score = 3; %>
             <% let fear_score = 3; %>
+            <% console.log("reached here"); %>
+            <!-- Needed to access the result property of the details object
+            Result contains array of JS objects of which have same snapID
+             so accessing it in first item should suffice-->
+            <% const snapID = details.result[0].snapshot_id; %>
 
             <% let formatteddate = new Date('1995-12-17T03:24:00'); %>
-            <% var snap_date = details[0].datetime; %>
+            <% var snap_date = details.datetime; %>
             <% var input_date = new Date(); %>
-            <% let context_text = details[0].trigger_description; %>
+            <% let context_text = details.trigger_description; %>
+            <% console.log(details); %>
+            <% console.log(`This is snapshot id: ${snapID}`) %>
+           
 
-            <% let snapID = details[0].snapshot_id; %>
-
-            <% for (let row of details) { %>
-                <% if(row.emotion_id === 1){ %>
-                  <% happy_score = row.score; %>
-                <% } %>
-                <% if(row.emotion_id === 2){ %>
-                  <% sad_score = row.score; %>
-                <% } %>
-                <% if(row.emotion_id === 3){ %>
-                  <% disgust_score = row.score; %>
-                <% } %>
-                <% if(row.emotion_id === 4){ %>
-                  <% contempt_score = row.score; %>
-                <% } %>
-                <% if(row.emotion_id === 5){ %>
-                  <% anger_score = row.score; %>
-                <% } %>
-                <% if(row.emotion_id === 6){ %>
-                  <% fear_score = row.score; %>
-                <% } %>
-                <% if(row.emotion_id === 7){ %>
-                  <% surprise_score = row.score; %>
-                <% } %>
+            <% for(var key in details){ %>
+              <% if(key.emotion_id === 1){ %>
+                <% happy_score = row.score; %>
+              <% } %>
+              <% if(key.emotion_id === 2){ %>
+                <% sad_score = row.score; %>
+              <% } %>
+              <% if(key.emotion_id === 3){ %>
+                <% disgust_score = row.score; %>
+              <% } %>
+              <% if(key.emotion_id === 4){ %>
+                <% contempt_score = row.score; %>
+              <% } %>
+              <% if(key.emotion_id === 5){ %>
+                <% anger_score = row.score; %>
+              <% } %>
+              <% if(key.emotion_id === 6){ %>
+                <% fear_score = row.score; %>
+              <% } %>
+              <% if(key.emotion_id === 7){ %>
+                <% surprise_score = row.score; %>
+              <% } %>
             <% }; %>
-
+        
+                      
             <div class=".container">
                 <div class="m-3 border border-primary">
                     <!-- Show emotion values associated with entry-->

@@ -1,6 +1,5 @@
 const express = require("express");
 const path = require("path");
-const conn = require('../utils/dbconn');
 const controller = require('./../controllers/controllers');
 //creating router object
 const router = express.Router();

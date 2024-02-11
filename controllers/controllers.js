@@ -1,4 +1,3 @@
-const conn = require("./../utils/dbconn");
 const axios = require('axios');
 const path = require('path');
 
@@ -14,7 +13,34 @@ exports.getLogin = (req, res) => {
 };
 
 //route for postLogin
-exports.postLogin = (req, res) => {
+exports.postLogin = async (req, res) => {
+
+const vals = req.body;
+const endpoint = `http://localhost:3002/dash/users/`;
+const session = req.session;
+console.log(session);
+
+  await axios
+  .post(endpoint, vals)
+  .then((response)=>{
+    const data = response.data.result;
+    console.log("the data will follow this line");
+    console.log(data);
+    session.isloggedin = true;
+    session.user_id = data[0].user_id;
+    session.user_name = data[0].first_name;
+    session.role = data[0].role;
+    console.log(session);
+    res.redirect('dash');
+    //extract role from data then redirect to correct route for dash
+
+  })
+  .catch((error) =>{
+    console.log(endpoint);
+    console.log(`Error making login post API request: ${error}`);
+  });
+};
+  /*
   const { email, userpass } = req.body;
   const vals = [email, userpass];
   const checkuserSQL = `SELECT user_id, first_name, role FROM reg_user 
@@ -40,6 +66,7 @@ exports.postLogin = (req, res) => {
     }
   });
 };
+*/
 
 //route for getLogout
 exports.getLogout = (req, res) => {
@@ -49,7 +76,7 @@ exports.getLogout = (req, res) => {
 };
 
 //route for getDash
-exports.getDash = (req, res) => {
+exports.getDash = async (req, res) => {
   var userinfo ={};
   const {isloggedin, user_id} = req.session;
   const session = req.session;
@@ -64,7 +91,7 @@ exports.getDash = (req, res) => {
   if (isloggedin && user_role == 'admin') {
     const endpoint = `http://localhost:3002/dash/admin/${user_id}`;
 
-    axios
+    await axios
     .get(endpoint)
     .then((response) => {
       const data = response.data.result;
@@ -76,7 +103,7 @@ exports.getDash = (req, res) => {
     });
 } else if (isloggedin && user_role == 'user')  {
   const endpoint = `http://localhost:3002/dash/users/${user_id}`;
-  axios
+  await axios
     .get(endpoint)
     .then((response) => {
       const data = response.data.result;
@@ -89,10 +116,8 @@ exports.getDash = (req, res) => {
 };
 };
 
-
-
 //route for getEdit
-exports.getEdit = (req, res) => {
+exports.getEdit = async (req, res) => {
   const session = req.session;
   const isloggedin = session.isloggedin;
   const user_id = session.user_id;
@@ -103,90 +128,66 @@ exports.getEdit = (req, res) => {
     //decontruct params to get snapID
     const { id } = req.params;
 
-    const selectforEditSQL = `SELECT * FROM  snapshot 
-      INNER JOIN snapshot_emotion 
-      ON snapshot.snapshot_id = snapshot_emotion.snapshot_id 
-      INNER JOIN trigger_context 
-      ON snapshot.trigger_id = trigger_context.trigger_id 
-      WHERE snapshot.snapshot_id = ? `;
+    const endpoint = `http://localhost:3002/edit/${id}`;
 
-    conn.query(selectforEditSQL, id, (err, rows) => {
-      if (err) {
-        throw err;
-      } else {
-        res.render("editsnap", { loggedin: isloggedin, details: rows });
-      }
+    await axios
+    .get(endpoint)
+    .then((response) => {
+      const data = response.data;
+      console.log("get edit data");
+      console.log(data);
+      res.render("editsnap", { loggedin: isloggedin, details: data });
+    })
+    .catch((error) => {
+      //need to handle non -logged in case
+      console.log(`Error making getEdit API request: ${error}`);
     });
-  } else {
-    res.render("login", {loggedin: false, error: "You  must first log in" });
-  }
+  };
 };
 
 //route for postEdit 
-exports.postEdit = (req, res) => {
-  
-  console.log(req.params.id);
-  const snapshot_id = req.params.id;
-  console.log(snapshot_id);
-  const trigger_description = req.body.context;
-  console.log(trigger_description);
-  const updateVals = [trigger_description, snapshot_id];
-  const updateSQL = `UPDATE trigger_context 
-    INNER JOIN snapshot ON trigger_context.trigger_id = snapshot.trigger_id
-    SET  trigger_context.trigger_description = ?
-    WHERE snapshot.snapshot_id = ?`;
-  conn.query(updateSQL, updateVals, (err, rows) => {
-    if (err) {
-      throw err;
-    } else {
-      console.log(rows);
-      res.redirect("/dash");
-    }
-  });
+exports.postEdit = async (req, res) => {
+
+  const session = req.session;
+  const isloggedin = session.isloggedin;
+
+  if(isloggedin){
+    const { id } = req.params;
+    console.log(id);
+    const vals = {context} = req.body;
+    console.log(vals);
+    const endpoint = `http://localhost:3002/edit/${id}`;
+    console.log(endpoint);
+    
+    await axios
+    .put(endpoint, vals)
+    .then((response)=> {
+      console.log(response.data);
+      res.redirect('/dash');
+    })
+    .catch((error) => {
+      console.log(`Error making edit put API request: ${error}`);
+    });
+  };
 };
 
 //route for postDelete
-exports.postDelete = (req, res) => {
-  const snapshot_id = req.params.id;
-  const deleteSQL1 = `DELETE FROM snapshot_emotion WHERE snapshot_id = ?`;
-  const deleteSQL2 = `DELETE FROM snapshot WHERE snapshot_id = ?`;
+exports.postDelete = async (req, res) => {
 
-  conn.beginTransaction(function (err) {
-    if (err) {
-      throw err;
-    }
-    //first delete
-    conn.query(deleteSQL1, snapshot_id, function (err, results) {
-      if (err) {
-        return conn.rollback(function () {
-          console.log("Delete from snapshot table error: " + err);
-          throw err;
-        });
-        console.log("Snapshot " + snapshot_id + " deleted from snapshot table");
-      }
-      //second deletion
-      conn.query(deleteSQL2, snapshot_id, function (err, results) {
-        if (err) {
-          return conn.rollback(function () {
-            console.log("Delete from snapshot_emotion table error: " + err);
-            throw err;
-          });
-          console.log("Snapshot " + snapshot_id + " delete successful!");
-        }
-        conn.commit(function (err) {
-          if (err) {
-            return conn.rollback(function () {
-              throw err;
-            });
-            console.log("Snapshot successfully deleted!");
-          }
-        });
-      });
-      res.redirect("/dash");
-    });
+  const id = req.params.id;
+
+  const endpoint = `http://localhost:3002/del/${id}`;
+
+  await axios
+  .delete(endpoint)
+  .then((response) => {
+    console.log(response.data);
+    res.redirect('/dash');
+  })
+  .catch((error) => {
+    console.log(`Error making Delete API request: ${error}`);
   });
 };
-
 
 //route for getAddsnap
 exports.getAddsnap = (req, res) => {
@@ -204,23 +205,24 @@ exports.getAddsnap = (req, res) => {
 };
 
 //route for postAddsnap
-exports.postAddsnap = (req, res) => {
+exports.postAddsnap = async (req, res) => {
   const vals = { 
     happiness, sadness, anger, disgust,
     contempt, surprise, fear, context
   } = req.body;
   const endpoint = `http://localhost:3002/addsnap`;
 
-  axios
+  await axios
   .post(endpoint, vals)
   .then((response) => {
     const data = response.data;
     console.log(data);
-    res.redirect('/');
+    res.redirect('/dash');
   })
   .catch((error) => {
     console.log(`Error making postAddSnap API request: ${error}`);
   });
+};
 
 /*
   const data = req.body;
@@ -255,7 +257,7 @@ exports.postAddsnap = (req, res) => {
     //need to bring into one connection via one query. 
     //look into multiple statements in one connection (https://stackoverflow.com/questions/23266854/node-mysql-multiple-statements-in-one-query)
     //use connection.begin transaction */
-
+/*
   conn.beginTransaction(function (err) {
     if (err) {
       throw err;
@@ -311,6 +313,7 @@ exports.postAddsnap = (req, res) => {
     res.redirect("/dash");
   });
 };
+*/
 
 //handler for all other paths --> 404 is static so could use Sendfile to a separate HTML file
 //route for 404 - *
