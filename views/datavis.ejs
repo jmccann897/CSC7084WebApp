@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap Chart JS example</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  </head>
+  <body class="bg-success">
+    <div class="col-8 offset-2 my-5">
+        <div class="card"> <!-- chart will be in here-->
+            <div class="card-body">
+                <h5>Chart 1</h5>
+                <hr> 
+                <canvas id="emotioncount"></canvas> <!-- Chart.js renders chart elements on an HTML5 canvas 
+                    unlike several others, mostly D3.js-based, charting libraries that render as SVG. 
+                    Canvas rendering makes Chart.js very performant, especially for large datasets 
+                    and complex visualizations that would otherwise require thousands of SVG nodes 
+                    in the DOM tree.-->
+            </div>
+        </div>
+        <div class="card"> <!-- chart will be in here-->
+            <div class="card-body">
+                <h5>Chart 2</h5>
+                <hr> 
+                <canvas id="emotionaverage"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        //ctx = context
+        const ctx = document.getElementById('emotioncount');
+
+        //need to extract data to chart via api call
+
+        //need to set chart.data.dataset[1] = data to chart
+      
+        //instaniating new chart object
+        new Chart(ctx, {
+        //type of chart we want to create
+          type: 'bar',
+          //data to go into create chart
+          data: {
+            labels: ['Happiness', 'Sadness', 'Anger', 'Disgust', 'Contempt', 'Surprise', 'Fear'],
+            datasets: [{
+              label: 'Emotion Count',
+              data: [12, 19, 3, 5, 2, 3, 1], //data in array
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+    </script>
+
+<script>
+    const ctx2 = document.getElementById('emotionaverage');
+  
+    new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: ['Happiness', 'Sadness', 'Anger', 'Disgust', 'Contempt', 'Surprise', 'Fear'],
+        datasets: [{
+          label: 'Emotion Average',
+          data: [12, 19, 3, 5, 2, 3, 1],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+</script>
+
+  </body>
+</html>
+

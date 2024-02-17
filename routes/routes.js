@@ -12,6 +12,7 @@ router.get('/login', controller.getLogin);
 router.get('/logout', controller.getLogout);
 router.get('/dash', controller.getDash);
 router.get('/addsnap', controller.getAddsnap);
+router.get('/datavis/:id', controller.getDatavis);
 router.get('*', controller.get404);
 //post routes
 router.post('/edit/:id', controller.postEdit);
