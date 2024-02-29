@@ -50,7 +50,7 @@
           </thead>
           <tbody>
 
-            <% const dateformat = {weekday:'long', year:'numeric', month:'long', day:'numeric'}; %>
+            <% const dateformat = {weekday:'long', year:'numeric', month:'long', day:'numeric', hour:'numeric', minute:'numeric', second:'numeric'}; %>
             <% let id_count = 0; %>
             <% let id_max = history.reduce((acc, value) => { %>
                 <% return (acc = acc > value.snapshot_id ? acc: value.snapshot_id); %>
