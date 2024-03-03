@@ -1,10 +1,8 @@
 const express = require("express");
 const morgan = require("morgan");
 const dotenv = require('dotenv').config({path:'./config.env'});
-const bcrypt = require('bcrypt');
 const session = require('express-session');
 const router = require('./routes/routes');
-const path = require('path');
 
 //creating express object rep our app
 const app = express(); 

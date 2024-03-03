@@ -17,11 +17,10 @@
       crossorigin="anonymous"
     ></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <title>Dashboard template</title>
+    <title>Dashboard</title>
   </head>
   <body>
     <div class=".container"><%- include('header'); %></div>
-
     <div class=".container"><%- include('nav'); %></div>
 
     <!-- Historical data table -->
@@ -37,7 +36,7 @@
             <tr>
               <th scope="col">Datetime</th>
               <th scope="col">Snap ID</th>
-              <th scope="col">Happiness</th>
+              <th scope="col">Enjoyment</th>
               <th scope="col">Sadness</th>
               <th scope="col">Disgust</th>
               <th scope="col">Contempt</th>
@@ -49,79 +48,86 @@
             </tr>
           </thead>
           <tbody>
-
-            <% const dateformat = {weekday:'long', year:'numeric', month:'long', day:'numeric', hour:'numeric', minute:'numeric', second:'numeric'}; %>
-            <% let id_count = 0; %>
-            <% let id_max = history.reduce((acc, value) => { %>
-                <% return (acc = acc > value.snapshot_id ? acc: value.snapshot_id); %>
-            <% }, 0); %>
+          <%
+            const dateformat = {weekday:'long', year:'numeric', month:'long', day:'numeric', hour:'numeric', minute:'numeric', second:'numeric'}; 
+            let idCount = 0; 
+            let idMax = history.reduce((acc, value) => { 
+                 return (acc = acc > value.snapshot_id ? acc: value.snapshot_id);
+            }, 0); 
             
-            <% let happy_score =0; %>
-            <% let sad_score =0; %>
-            <% let disgust_score =0; %>
-            <% let contempt_score =0; %>
-            <% let anger_score =0; %>
-            <% let fear_score =0; %>
-            <% let surprise_score =0; %>
-            <% let formatteddate = new Date('1995-12-17T03:24:00'); %>
-            <% let context_text = 'default'; %>
-            <% let snapID = 0; %>
+            let happy_score =0;
+            let sad_score =0;
+            let disgust_score =0;
+            let contempt_score =0;
+            let anger_score =0;
+            let fear_score =0;
+            let surprise_score =0;
+            let formatteddate = new Date('1995-12-17T03:24:00');
+            let context_text = 'default';
+            let snapID = 0;
+          %>
 
-            <!--Loop through history per id_count from 0 to id_max-->
-            <% for (let i =1; i <= id_max; i++){ %>
-                <% const data_array = history.filter((row) => row.snapshot_id === i); %>
+            
 
-                <!--If no data points +1 to id_count-->
+            <!-- Loop through history per id_count from 0 to id_max-->
+            <% for (let i =1; i <= idMax; i++){ %>
+               <% const data_array = history.filter((row) => row.snapshot_id === i); %>
+
+                <!-- If no data points +1 to id_count -->
                 <% if(data_array.length <1) {continue} %>
-                <!--If data, then set date & scores and output-->
-                <!-- Looping through history filtered to snapID-->
-                <% data_array.forEach((row) =>{ %>
-                    <% let emotion_name =""; %>
-                    <% if(row.emotion_id === 3){ %>
-                      <% emotion_name = "happinness"; %>
-                      <% happy_score = row.score; %>
-                    <% } %>
+
+                <!--
+                If data, then set date & scores and output
+                Looping through history filtered to snapID
+                -->
+
+                <%
+                data_array.forEach((row) =>{
+                    let emotion_name ="";
+                    if(row.emotion_id === 1){
+                      emotion_name = "happinness";
+                      happy_score = row.score;
+                     }
     
-                    <% if(row.emotion_id === 2){ %>
-                      <% emotion_name = "sadness"; %>
-                      <% sad_score = row.score; %>
-                    <% } %>
+                    if(row.emotion_id === 2){
+                      emotion_name = "sadness";
+                      sad_score = row.score;
+                    }
     
-                    <% if(row.emotion_id === 3){ %>
-                      <% emotion_name = "disgust"; %>
-                      <% disgust_score = row.score; %>
-                    <% } %>
+                    if(row.emotion_id === 3){
+                      emotion_name = "disgust";
+                      disgust_score = row.score;
+                    }
     
-                    <% if(row.emotion_id === 4){ %>
-                      <% emotion_name = "contempt"; %>
-                      <% contempt_score = row.score; %>
-                    <% } %>
+                    if(row.emotion_id === 4){
+                      emotion_name = "contempt";
+                      contempt_score = row.score;
+                    }
     
-                    <% if(row.emotion_id === 5){ %>
-                      <% emotion_name = "anger"; %>
-                      <% anger_score = row.score; %>
-                    <% } %>
+                    if(row.emotion_id === 5){
+                      emotion_name = "anger";
+                      anger_score = row.score;
+                    }
     
-                    <% if(row.emotion_id === 6){ %>
-                      <% emotion_name = "fear"; %>
-                      <% fear_score = row.score; %>
-                    <% } %>
+                    if(row.emotion_id === 6){
+                      emotion_name = "fear";
+                      fear_score = row.score;
+                    }
     
-                    <% if(row.emotion_id === 7){ %>
-                      <% emotion_name = "surprise"; %>
-                      <% surprise_score = row.score; %>
-                    <% } %>
-                    <% var rawdate = new Date(row.datetime); %>
-                    <% formatteddate = new Intl.DateTimeFormat('en-GB',dateformat).format(rawdate); %>
-                    <% context_text = row.trigger_description; %>
-                    <% snapID = row.snapshot_id; %>
-                    
-                <% }); %>
+                    if(row.emotion_id === 7){
+                      emotion_name = "surprise";
+                      surprise_score = row.score;
+                    }
+
+                    var rawdate = new Date(row.datetime);
+                    formatteddate = new Intl.DateTimeFormat('en-GB',dateformat).format(rawdate);
+                    context_text = row.trigger_description;
+                    snapID = row.snapshot_id;
+
+                  }); %>
 
                 <!--Outputting-->
                 <tr>
-                  <!-- Need to update so takes the date from the snapID-->
-                  
                       <td><%= formatteddate %></td>
                       <td><%= i %></td>
                       <td><%= happy_score %></td>
@@ -133,18 +139,15 @@
                       <td><%= surprise_score %></td>
                       <td><%= context_text %></td>
                       <td>
-
                         <div class="col">
                           <a href='/edit/<%= snapID %>' class="btn btn-outline-primary"
                            type="submit" value="Edit">Edit</a>
                         </div>
-                        
-                        
                       </td>
                 </tr>
 
             <% } %>
-                  
+                
           </tbody>
         </table>
       </div>

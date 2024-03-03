@@ -1,5 +1,4 @@
 const axios = require("axios");
-const path = require("path");
 const bcrypt = require("bcrypt");
 
 //Default route handler - set to sign up
@@ -70,20 +69,7 @@ exports.postSignUp = async (req, res) => {
         if (status === 201) {
           //new user added to db therefore 201 code expected
           console.log("User registered successfully");
-          /*
-          Do I need to create a session to allow new user to 
-          move to dash page?
-
-          const data = response.data.row;
-          console.log("the data will follow this line");
-          console.log(data);
-          session.isloggedin = true;
-          session.user_id = data[0].user_id;
-          session.user_name = data[0].first_name;
-          session.role = data[0].role;
-          console.log(session);
-          */
-          res.redirect("/dash");
+          res.redirect("/login");
         } else {
           //user not able to be added
           console.log(response.status);
@@ -142,41 +128,6 @@ exports.postLogin = async (req, res) => {
       console.log(`Error making login email check API request: ${error}`);
     });
 
-  //console.log("reached");
-  //console.log(user.password);
-  //console.log(userpass);
-
-  
-
-//use promise based approach for bcrypt
-/*
-await bcrypt.compare(userpass, user.password, function (err, isMatch) {
-  // Your callback code here
-});
-
-try {
-  const isMatch = await bcrypt.compare(userpass, user.password);
-  if (isMatch) {
-    // Passwords match
-    console.log("in match path");
-    regUserFlag = true;
-    console.log(`flag status within match ${regUserFlag}`);
-  } else {
-    // Passwords don't match
-    console.log("Passwords dont match");
-    regUserFlag = false;
-    res.render("login", {
-      loggedin: false,
-      error: "Invalid user credentials",
-    });
-    return; // Early return to prevent further execution
-  }
-} catch (err) {
-  // handle error
-  console.log("in error path");
-  throw err;
-}
-*/
    //flag to continue if passwords match
    var regUserFlag = false;
    // bcrypt compare method to check if userpass = plaintext user input matches user.password = db stored hash
