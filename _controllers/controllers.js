@@ -634,11 +634,6 @@ exports.getDatavis = async (req, res) => {
           }
         }
 
-        //calendar matrix
-
-        //loop through dates and select the highest score per date
-        //visualise highest score by colour - no entry for that date = gray out
-
         res.render("datavis", {
           loggedin: isloggedin,
           user: userinfo,
@@ -661,12 +656,6 @@ exports.getDatavis = async (req, res) => {
     .catch((error) => {
       console.log(`Error making get Data Vis API request: ${error}`);
     });
-
-  //need to get data to chart
-  //get a count of all emotion types - bar
-  //get the average score for each emotion - bar
-  //plot the emotions vs time per emotion - line
-  //res.render("datavis");
 };
 
 //handler for all other paths --> 404 is static so could use Sendfile to a separate HTML file
