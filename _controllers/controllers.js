@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 //Default route handler - set to sign up
 exports.getDefault = (req, res) => {
   res.status(200);
-  res.render("signup", { error: "", loggedin: false });
+  res.render("landing", { error: "", loggedin: false });
 };
 
 //route for getSignup
@@ -23,7 +23,7 @@ exports.postSignUp = async (req, res) => {
   vals.email = email;
   vals.hash = hash;
   console.log(vals); //need to be JS Objects
-
+  
   let newuserflag = false;
 
   //api call to first check if already present
@@ -69,7 +69,45 @@ exports.postSignUp = async (req, res) => {
         if (status === 201) {
           //new user added to db therefore 201 code expected
           console.log("User registered successfully");
-          res.redirect("/login");
+          
+          const endpoint = `http://localhost:3002/dash/users/`;
+          const session = req.session;
+          console.log(session);
+          const vals2 = {};
+          vals2.email = email;
+          vals2.userpass = userpass;
+                    
+          axios
+            .post(endpoint, vals2, {
+              validateStatus: (status) => {
+                return status < 500;
+              },
+            })
+            .then((response) => {
+              const status = response.status;
+              if (status === 200) {
+                const data = response.data.result;
+                console.log("the data will follow this line");
+                console.log(data);
+                session.isloggedin = true;
+                session.user_id = data[0].user_id;
+                session.user_name = data[0].first_name;
+                session.role = data[0].role;
+                console.log(session);
+                res.redirect('dash');
+              } else {
+                console.log(response.status);
+                console.log(response.data);
+                res.render("login", {
+                  loggedin: false,
+                  error: "Invalid user credentials",
+                });
+              }
+            })
+            .catch((error) => {
+              console.log(`Error making login post API request: ${error}`);
+            });
+
         } else {
           //user not able to be added
           console.log(response.status);
@@ -95,12 +133,13 @@ exports.getLogin = (req, res) => {
 //route for postLogin
 exports.postLogin = async (req, res) => {
   const { email, userpass } = req.body; //destructuring
-  
+
   const vals1 = {};
   vals1.email = email;
   const user = {};
-
-  //api call to check if email present in DB 
+  var userPresentFlag = false;
+  
+  //api call to check if email present in DB
   const endpoint1 = `http://localhost:3002/dash/usercheck`;
   await axios
     .post(endpoint1, vals1, {
@@ -115,6 +154,7 @@ exports.postLogin = async (req, res) => {
         console.log(`This is the userpass: ${userpass}`);
         console.log(`This is the db pswrd: ${data[0].password}`);
         user.password = data[0].password;
+        userPresentFlag = true;
       } else {
         console.log(response.status);
         console.log(response.data);
@@ -128,34 +168,36 @@ exports.postLogin = async (req, res) => {
       console.log(`Error making login email check API request: ${error}`);
     });
 
-   //flag to continue if passwords match
-   var regUserFlag = false;
-   // bcrypt compare method to check if userpass = plaintext user input matches user.password = db stored hash
-   const isMatch = await bcrypt.compare(userpass, user.password); 
-   if(isMatch){
-    //passwords match
-    console.log("passwords match");
-    regUserFlag = true;
-    console.log(`flag status within match ${regUserFlag}`);
-   } else {
-    //passwords dont match
-    console.log("passwords dont match");
-    regUserFlag = false;
-    res.render("login", {
-      loggedin: false,
-      error: "Invalid user credentials",
-    });
-    return; // Early return to prevent further execution
-   }
+  if (userPresentFlag) {
+    //flag to continue if passwords match
+    var regUserFlag = false;
+    // bcrypt compare method to check if userpass = plaintext user input matches user.password = db stored hash
+    const isMatch = await bcrypt.compare(userpass, user.password);
+    if (isMatch) {
+      //passwords match
+      console.log("passwords match");
+      regUserFlag = true;
+      console.log(`flag status within match ${regUserFlag}`);
+    } else {
+      //passwords dont match
+      console.log("passwords dont match");
+      regUserFlag = false;
+      res.render("login", {
+        loggedin: false,
+        error: "Invalid password",
+      });
+      return; // Early return to prevent further execution
+    }
+  }
 
-   // if passwords match, flag allows for session and login
+  // if passwords match, flag allows for session and login
   if (regUserFlag == true) {
     const endpoint2 = `http://localhost:3002/dash/users/`;
     const session = req.session;
     console.log(session);
     console.log(regUserFlag);
-
-     axios
+    
+    axios
       .post(endpoint2, vals1, {
         validateStatus: (status) => {
           return status < 500;
@@ -172,7 +214,7 @@ exports.postLogin = async (req, res) => {
           session.user_name = data[0].first_name;
           session.role = data[0].role;
           console.log(session);
-          res.redirect("/dash");
+          res.redirect('dash');
         } else {
           console.log(response.status);
           console.log(response.data);

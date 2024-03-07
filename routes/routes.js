@@ -17,6 +17,7 @@ router.get('/logout', controller.getLogout);
 router.get('/dash', isAuth, controller.getDash);
 router.get('/addsnap', isAuth, controller.getAddsnap);
 router.get('/datavis/:id', isAuth, controller.getDatavis);
+router.get('/signup', controller.getSignUp);
 router.get('*', controller.get404);
 
 //post routes

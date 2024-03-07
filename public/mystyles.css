@@ -2,11 +2,6 @@
 body {
     margin:0;
     font-family: Geneva, Verdana, sans-serif;
-    /*
-    background-image: url('background3.jpg');
-    background-repeat: no-repeat;
-    background-size: cover;
-    */
     margin-bottom: 100px;
 }
 
@@ -27,23 +22,6 @@ main {
     font-size: x-large;
     color: white;
     text-align:center;
-}
-
-.footer {
-    position:fixed;
-    bottom: 0;
-    height: 10px;
-    width: 100%;
-    padding: 40px;
-    background-color: #CC231E;
-}
-
-.footer .title {
-    font-family: 'Mountains of Christmas';
-    margin-left: 10px;
-    font-size: medium;
-    color:white;
-    text-align: center;
 }
 
 .flex-container {
