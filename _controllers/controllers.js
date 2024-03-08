@@ -469,7 +469,7 @@ exports.postAddsnap = async (req, res) => {
     contempt,
     surprise,
     fear,
-    context,
+    context
   } = req.body);
 
   var vals = {};

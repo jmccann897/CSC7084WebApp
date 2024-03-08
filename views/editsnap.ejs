@@ -46,7 +46,7 @@
             let formatteddate = new Date('1995-12-17T03:24:00'); 
             var snap_date = details.datetime;
             var input_date = new Date();
-            let context_text = details.trigger_description; 
+            let context_text = details.result[0].trigger_description; 
             console.log(details); 
             console.log(`This is snapshot id: ${snapID}`);
 
@@ -83,7 +83,7 @@
         
                       
             <div class=".container">
-                <div class="m-3 border border-primary">
+                <div class="m-3">
                     <!-- Show emotion values associated with entry-->
                     <%- include('selecteddropdown', {happy_score, sad_score, anger_score, disgust_score, contempt_score, surprise_score, fear_score}); %>
                                         
