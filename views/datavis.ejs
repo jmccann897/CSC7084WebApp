@@ -82,7 +82,7 @@
       //need to convert data from page render to JSON
       const total_data = `<%- JSON.stringify(total_data) %>`;
       const yvals1 = JSON.parse(total_data); //parse JSON data
-      console.log(`yvals for avgs: ${yvals1}`);
+      console.log(`yvals for total: ${yvals1}`);
 
       const average_data = `<%- JSON.stringify(avg_data) %>`;
       const yvals2 = JSON.parse(average_data);
@@ -118,7 +118,7 @@
       }
 
       //disgust
-      const disgust_data = `<%- JSON.stringify(sad_scores) %>`;
+      const disgust_data = `<%- JSON.stringify(disgust_scores) %>`;
       const disgust_xydata = JSON.parse(disgust_data);
       const disgust_xdata = [];
       const disgust_ydata = [];
@@ -131,7 +131,7 @@
       }
 
       //contempt
-      const contempt_data = `<%- JSON.stringify(sad_scores) %>`;
+      const contempt_data = `<%- JSON.stringify(contempt_scores) %>`;
       const contempt_xydata = JSON.parse(contempt_data);
       const contempt_xdata = [];
       const contempt_ydata = [];
@@ -144,7 +144,7 @@
       }
 
       //anger
-      const anger_data = `<%- JSON.stringify(sad_scores) %>`;
+      const anger_data = `<%- JSON.stringify(anger_scores) %>`;
       const anger_xydata = JSON.parse(anger_data);
       const anger_xdata = [];
       const anger_ydata = [];
@@ -157,7 +157,7 @@
       }
 
       //fear
-      const fear_data = `<%- JSON.stringify(sad_scores) %>`;
+      const fear_data = `<%- JSON.stringify(fear_scores) %>`;
       const fear_xydata = JSON.parse(fear_data);
       const fear_xdata = [];
       const fear_ydata = [];
@@ -170,7 +170,7 @@
       }
 
       //surprise
-      const surprise_data = `<%- JSON.stringify(sad_scores) %>`;
+      const surprise_data = `<%- JSON.stringify(surprise_scores) %>`;
       const surprise_xydata = JSON.parse(surprise_data);
       const surprise_xdata = [];
       const surprise_ydata = [];

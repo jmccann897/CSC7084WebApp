@@ -26,7 +26,7 @@ exports.postSignUp = async (req, res) => {
   
   let newuserflag = false;
 
-  //api call to first check if already present
+  //api call to first check if email already present
   const endpoint1 = `http://localhost:3002/dash/signup`;
 
   await axios
